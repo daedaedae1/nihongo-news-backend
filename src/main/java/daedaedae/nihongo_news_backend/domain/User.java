@@ -1,6 +1,15 @@
 package daedaedae.nihongo_news_backend.domain;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "test")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String userid;
     private String password;
 

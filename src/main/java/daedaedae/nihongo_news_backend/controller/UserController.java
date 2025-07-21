@@ -1,6 +1,8 @@
 package daedaedae.nihongo_news_backend.controller;
 
 import daedaedae.nihongo_news_backend.domain.User;
+import daedaedae.nihongo_news_backend.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,11 +10,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class UserController {
 
+    @Autowired
+    public UserService userService;
+
     @PostMapping("/login")
     public ResponseEntity<?> user(@RequestBody User user) {
         System.out.println("userid:" + user.getUserid());
         System.out.println("password: " + user.getPassword());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody User user){
+        userService.addUser(user);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
