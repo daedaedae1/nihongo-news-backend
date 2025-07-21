@@ -15,4 +15,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User isUserExists(User user) {
+        return userRepository.findByUserid(user.getUserid());
+    }
+
 }

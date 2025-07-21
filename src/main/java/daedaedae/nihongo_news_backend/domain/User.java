@@ -3,7 +3,6 @@ package daedaedae.nihongo_news_backend.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "test")
 public class User {
 
     @Id
@@ -12,8 +11,25 @@ public class User {
 
     private String userid;
     private String password;
+    private String name;
 
     public User() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUserid() {
         return userid;
