@@ -1,4 +1,4 @@
-package daedaedae.domain;
+package daedaedae.nihongo_news_backend.domain;
 
 public class User {
     private String userid;
