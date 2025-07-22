@@ -36,7 +36,9 @@ public class UserController {
                 HttpSession session = request.getSession();
                 session.setAttribute("loginMember", checkUser);
 
-                return ResponseEntity.ok().body(Map.of("success", "로그인 성공!"));
+                return ResponseEntity.ok().body(Map.of("success", "로그인 성공!",
+                        "id", checkUser.getId(),
+                        "nickname", checkUser.getNickname()));
             } else {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
@@ -52,8 +54,8 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user){
-        User check = userService.isUserExists(user);
-        if (check == null) {
+        User checkUser = userService.isUserExists(user);
+        if (checkUser == null) {
             userService.addUser(user);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
