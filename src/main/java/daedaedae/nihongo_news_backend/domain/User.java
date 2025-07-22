@@ -9,9 +9,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+    private String nickname;
     private String userid;
     private String password;
-    private String name;
 
     public User() {}
 
@@ -29,6 +30,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getUserid() {

@@ -2,6 +2,10 @@ package daedaedae.nihongo_news_backend.controller;
 
 import daedaedae.nihongo_news_backend.domain.User;
 import daedaedae.nihongo_news_backend.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +21,21 @@ public class UserController {
     public UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> user(@RequestBody User user) {
+    public ResponseEntity<?> user(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
         String checkPassword = user.getPassword();
 
         User checkUser = userService.isUserExists(user);
 
         if (checkUser != null) {
             if (checkUser.getPassword().equals(checkPassword)) {
+//                // 쿠키 생성
+//                Cookie idCookie = new Cookie("memberid", checkUser.getId().toString());
+//                response.addCookie(idCookie);
+
+                // 세션 생성
+                HttpSession session = request.getSession();
+                session.setAttribute("loginMember", checkUser);
+
                 return ResponseEntity.ok().body(Map.of("success", "로그인 성공!"));
             } else {
                 return ResponseEntity
@@ -54,5 +66,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/dare")
+    public ResponseEntity<?> getUserInfo(HttpSession session) {
+        User user = (User) session.getAttribute("loginMember");
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "로그인이 필요합니다"));
+        }
+
+        return ResponseEntity.ok(Map.of("id", user.getId(),
+                "nickname", user.getNickname()));
+    }
 
 }
