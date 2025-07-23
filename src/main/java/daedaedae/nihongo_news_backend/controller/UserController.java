@@ -55,7 +55,7 @@ public class UserController {
                         "nickname", checkUser.getNickname()));
             } else {
                 return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
+                        .status(HttpStatus.BAD_REQUEST) // 잘못된 값을 의미
                         .body(Map.of("error", "비밀번호가 일치하지 않습니다!"));
             }
         }
@@ -91,6 +91,19 @@ public class UserController {
         return ResponseEntity.ok(Map.of("userid", user.getUserid(),
                 "nickname", user.getNickname(),
                 "name", user.getName()));
+    }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<?> checkId(@RequestParam("userid") String userid) {
+        boolean result = userService.existsByUserid(userid);
+        if (result) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)    // 비즈니스 로직의 실패를 의미, 409 Conflict
+                    .body(Map.of("error", "이미 존재하는 아이디입니다."));
+        }
+        else {
+            return ResponseEntity.ok(Map.of("success", "사용 가능한 아이디입니다."));
+        }
     }
 
 }

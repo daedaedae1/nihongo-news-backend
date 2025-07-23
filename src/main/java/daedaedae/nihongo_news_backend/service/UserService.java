@@ -24,4 +24,9 @@ public class UserService {
         return userRepository.findByUserid(user.getUserid());
     }
 
+    public boolean existsByUserid(String userid) {
+        User user = userRepository.findByUserid(userid);
+        return (user != null)? true : false;
+    }
+
 }
