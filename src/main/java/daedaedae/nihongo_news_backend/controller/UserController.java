@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,26 +19,23 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    public UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> user(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
-        String checkPassword = user.getPassword();
-
         User checkUser = userService.isUserExists(user);
 
         if (checkUser != null) {
-            if (checkUser.getPassword().equals(checkPassword)) {
-//                // 쿠키 생성
-//                Cookie idCookie = new Cookie("memberid", checkUser.getId().toString());
-//                response.addCookie(idCookie);
+            if (passwordEncoder.matches(user.getPassword(), checkUser.getPassword())) {
 
                 // 세션 생성
                 HttpSession session = request.getSession();
                 session.setAttribute("loginMember", checkUser);
 
                 return ResponseEntity.ok().body(Map.of("success", "로그인 성공!",
-                        "id", checkUser.getId(),
                         "nickname", checkUser.getNickname()));
             } else {
                 return ResponseEntity
