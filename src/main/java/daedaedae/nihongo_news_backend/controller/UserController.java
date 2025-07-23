@@ -24,6 +24,22 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody User user){
+        User checkUser = userService.isUserExists(user);
+        if (checkUser == null) {
+            userService.addUser(user);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(Map.of("success", "회원가입 완료"));
+        }
+        else {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "이미 존재하는 아이디입니다"));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> user(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
         User checkUser = userService.isUserExists(user);
@@ -50,21 +66,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user){
-        User checkUser = userService.isUserExists(user);
-        if (checkUser == null) {
-            userService.addUser(user);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(Map.of("success", "회원가입 완료"));
-        }
-        else {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "이미 존재하는 아이디입니다"));
-        }
-    }
 
     @PostMapping("/dare")
     public ResponseEntity<?> getUserInfo(HttpSession session) {
@@ -74,8 +75,9 @@ public class UserController {
                     .body(Map.of("error", "로그인이 필요합니다"));
         }
 
-        return ResponseEntity.ok(Map.of("id", user.getId(),
-                "nickname", user.getNickname()));
+        return ResponseEntity.ok(Map.of("userid", user.getUserid(),
+                "nickname", user.getNickname(),
+                "name", user.getName()));
     }
 
 }
