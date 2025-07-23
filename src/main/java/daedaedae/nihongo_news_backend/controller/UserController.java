@@ -106,4 +106,29 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(HttpSession session, HttpServletResponse response) {
+        User user = (User) session.getAttribute(("loginMember"));
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "로그인이 필요합니다."));
+        }
+
+        userService.deleteUser(user);
+        session.invalidate();
+        // 프론트의 JSESSIONID 삭제
+        Cookie sessionCookie = new Cookie("JSESSIONID", null);
+        sessionCookie.setMaxAge(0);
+        sessionCookie.setPath("/");
+        response.addCookie(sessionCookie);
+
+        boolean stillExists = userService.existsByUserid(user.getUserid());
+        if (!stillExists) {
+            return ResponseEntity.ok(Map.of("success", "회원 탈퇴 성공"));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "회원 탈퇴에 에러 발생"));
+        }
+    }
+
 }
