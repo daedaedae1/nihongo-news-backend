@@ -66,6 +66,19 @@ public class UserController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session, HttpServletResponse response) {
+        // 세션 무효화
+        session.invalidate();
+
+        // 프론트의 JSESSIONID 삭제
+        Cookie sessionCookie = new Cookie("JSESSIONID", null);
+        sessionCookie.setMaxAge(0);
+        sessionCookie.setPath("/");
+        response.addCookie(sessionCookie);
+
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping("/dare")
     public ResponseEntity<?> getUserInfo(HttpSession session) {
