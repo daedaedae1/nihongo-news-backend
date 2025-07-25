@@ -21,6 +21,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User changePwd(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        return userRepository.save(user);
+    }
+
     public User isUserExists(User user) {
         return userRepository.findByUserid(user.getUserid());
     }

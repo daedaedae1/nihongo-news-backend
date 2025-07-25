@@ -118,11 +118,23 @@ public class UserController {
 
             session.setAttribute("loginMember", latestUser);
 
-            return ResponseEntity.ok(Map.of("success", "회원정보가 수정되었습니다."));
+            return ResponseEntity.ok(Map.of("success", "회원정보가 수정되었습니다.",
+                    "user", latestUser));
         }
         else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "회원정보 수정에 실패했습니다."));
         }
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePwd(@RequestBody Map<String, String> request, HttpSession session) {
+        User user = (User) session.getAttribute("loginMember");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "로그인이 필요합니다."));
+        }
+        userService.changePwd(user, request.get("newPassword"));
+        session.setAttribute("loginMember", user);
+        return ResponseEntity.ok(Map.of("success", "비밀번호가 변경되었습니다."));
     }
 
     @DeleteMapping("/delete")
