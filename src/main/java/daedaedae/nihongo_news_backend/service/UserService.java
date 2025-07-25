@@ -36,4 +36,14 @@ public class UserService {
         userRepository.delete(user);
     }
 
+
+    public User updateUser(User user) {
+        User loginUser = userRepository.findByUserid(user.getUserid());
+        if (loginUser != null) {
+            loginUser.setNickname(user.getNickname());
+            loginUser.setName((user.getName()));
+            return userRepository.save(loginUser);
+        } else return null;
+    }
+
 }

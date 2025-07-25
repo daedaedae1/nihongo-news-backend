@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> user(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
         User checkUser = userService.isUserExists(user);
 
         if (checkUser != null) {
@@ -106,8 +106,27 @@ public class UserController {
         }
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody User user, HttpSession session) {
+        User updateUser = user;
+        User loginUser = (User) session.getAttribute("loginMember");
+
+        if (loginUser.getUserid().equals(updateUser.getUserid())) {
+            userService.updateUser(updateUser);
+
+            User latestUser = userService.isUserExists(updateUser);
+
+            session.setAttribute("loginMember", latestUser);
+
+            return ResponseEntity.ok(Map.of("success", "회원정보가 수정되었습니다."));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "회원정보 수정에 실패했습니다."));
+        }
+    }
+
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<?> deleteUser(HttpSession session, HttpServletResponse response) {
         User user = (User) session.getAttribute(("loginMember"));
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
