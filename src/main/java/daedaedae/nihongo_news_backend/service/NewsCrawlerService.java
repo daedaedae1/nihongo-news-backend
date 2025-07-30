@@ -20,14 +20,12 @@ public class NewsCrawlerService {
     @Autowired
     private NewsRepository newsRepository;
 
-    @Transactional
     public List<NewsDto> fetchNewsList(int limit) throws Exception {
         String url = "https://www3.nhk.or.jp/news/";
         Connection connection = Jsoup.connect(url)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
-                .timeout(15000);
+                .timeout(10000);
         Document doc = connection.get();
-        System.out.println(doc.outerHtml());
 
         List<NewsDto> articles = new ArrayList<>();
 
@@ -41,9 +39,16 @@ public class NewsCrawlerService {
 
             // 이미지
             Element imgTag = item.selectFirst("dl dt a img");
-            String imgUrl = (imgTag != null && imgTag.hasAttr("data-src"))
-                    ? imgTag.attr("data-src")
-                    : "";
+            String imgUrl = "";
+            if (imgTag != null && imgTag.hasAttr("data-src")) {
+                String src = imgTag.attr("data-src");
+                // src가 http로 시작하지 않으면, 도메인을 붙여줌
+                if (src.startsWith("http")) {
+                    imgUrl = src;
+                } else {
+                    imgUrl = "https://www3.nhk.or.jp" + src;
+                }
+            }
 
             // 제목
             Element titleTag = item.selectFirst("em.title");
@@ -60,8 +65,18 @@ public class NewsCrawlerService {
 //            }
             articles.add(new NewsDto(title, articleUrl, imgUrl, date));
         }
-        System.out.println(articles);
         return articles;
+    }
+
+    @Transactional
+    public News saveNews(NewsDto newsDto) {
+        News news = new News(
+                newsDto.getTitle(),
+                newsDto.getUrl(),
+                newsDto.getDate(),
+                newsDto.getImage()
+        );
+        return newsRepository.save(news);
     }
 
     /*

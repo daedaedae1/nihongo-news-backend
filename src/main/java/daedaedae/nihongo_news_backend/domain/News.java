@@ -16,6 +16,9 @@ public class News {
     private String date;
     private String image;
 
+    public News() {
+    }
+
     public News(String title, String url, String date, String image) {
         this.title = title;
         this.url = url;

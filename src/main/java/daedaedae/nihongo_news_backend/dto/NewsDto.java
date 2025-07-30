@@ -1,7 +1,5 @@
 package daedaedae.nihongo_news_backend.dto;
 
-import lombok.AllArgsConstructor;
-
 public class NewsDto {
 
     private String title;
