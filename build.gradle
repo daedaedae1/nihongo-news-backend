@@ -30,6 +30,9 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	implementation 'org.jsoup:jsoup:1.17.2'
+	implementation 'org.projectlombok:lombok:1.18.30'
 }
 
 tasks.named('test') {
