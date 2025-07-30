@@ -8,21 +8,17 @@ public class NewsDto {
     private String url;
     private String image;
     private String date;
-    private String summary;
-    private String body;
 
     // = @NoArgsConstructor ?
     public NewsDto() {
     }
 
     // = @AllArgsConstructor
-    public NewsDto(String title, String url, String image, String date, String body, String summary) {
+    public NewsDto(String title, String url, String image, String date) {
         this.title = title;
         this.url = url;
         this.image = image;
         this.date = date;
-        this.body = body;
-        this.summary = summary;
     }
 
     public String getTitle() {
@@ -55,21 +51,5 @@ public class NewsDto {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
     }
 }

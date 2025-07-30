@@ -24,7 +24,6 @@ public class NewsCrawlerService {
     public List<NewsDto> fetchNewsList(int limit) throws Exception {
         String url = "https://www3.nhk.or.jp/news/";
         Connection connection = Jsoup.connect(url)
-                // .userAgent("MyProjectBot/1.0")
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
                 .timeout(15000);
         Document doc = connection.get();
@@ -54,19 +53,18 @@ public class NewsCrawlerService {
             Element timeTag = item.selectFirst("time");
             String date = (timeTag != null) ? timeTag.text().trim() : "";
 
-            // 저장 & Dto
-            if (!newsRepository.existsByUrl(articleUrl)) {
-                News news = new News(title, articleUrl, date, imgUrl);
-                newsRepository.save(news);
-            }
-            articles.add(new NewsDto(title, articleUrl, imgUrl, date, null, null));
+//            // 저장 & Dto
+//            if (!newsRepository.existsByUrl(articleUrl)) {
+//                News news = new News(title, articleUrl, date, imgUrl);
+//                newsRepository.save(news);
+//            }
+            articles.add(new NewsDto(title, articleUrl, imgUrl, date));
         }
-
-
-
+        System.out.println(articles);
         return articles;
     }
 
+    /*
     public NewsDto fetchArticleDetail(String url) throws Exception {
         Document doc = Jsoup.connect(url)
                 .userAgent("MyProjectBot/1.0")
@@ -91,5 +89,6 @@ public class NewsCrawlerService {
                 body.toString().trim()
         );
     }
+     */
 
 }

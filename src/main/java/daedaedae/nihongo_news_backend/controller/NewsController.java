@@ -14,8 +14,8 @@ public class NewsController {
     private NewsCrawlerService newsCrawlerService;
 
     // 뉴스 리스트
-    @PostMapping("/list")
-    public List<NewsDto> getNewsList(@RequestParam(name = "limit", defaultValue = "10") int limit) throws Exception {
+    @GetMapping("/list")
+    public List<NewsDto> getNewsList(@RequestParam(name = "limit", defaultValue = "5") int limit) throws Exception {
         return newsCrawlerService.fetchNewsList(limit);
     }
 }
