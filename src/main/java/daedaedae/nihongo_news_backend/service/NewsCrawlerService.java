@@ -1,8 +1,9 @@
 package daedaedae.nihongo_news_backend.service;
 
-import daedaedae.nihongo_news_backend.domain.News;
+import daedaedae.nihongo_news_backend.domain.Bookmark;
+import daedaedae.nihongo_news_backend.domain.User;
 import daedaedae.nihongo_news_backend.dto.NewsDto;
-import daedaedae.nihongo_news_backend.repository.NewsRepository;
+import daedaedae.nihongo_news_backend.repository.BookmarkRepository;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,8 +18,9 @@ import java.util.List;
 
 @Service
 public class NewsCrawlerService {
+
     @Autowired
-    private NewsRepository newsRepository;
+    private BookmarkRepository bookmarkRepository;
 
     public List<NewsDto> fetchNewsList(int limit) throws Exception {
         String url = "https://www3.nhk.or.jp/news/";
@@ -58,25 +60,9 @@ public class NewsCrawlerService {
             Element timeTag = item.selectFirst("time");
             String date = (timeTag != null) ? timeTag.text().trim() : "";
 
-//            // 저장 & Dto
-//            if (!newsRepository.existsByUrl(articleUrl)) {
-//                News news = new News(title, articleUrl, date, imgUrl);
-//                newsRepository.save(news);
-//            }
             articles.add(new NewsDto(title, articleUrl, imgUrl, date));
         }
         return articles;
-    }
-
-    @Transactional
-    public News saveNews(NewsDto newsDto) {
-        News news = new News(
-                newsDto.getTitle(),
-                newsDto.getUrl(),
-                newsDto.getDate(),
-                newsDto.getImage()
-        );
-        return newsRepository.save(news);
     }
 
     /*

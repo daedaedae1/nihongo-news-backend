@@ -1,17 +1,19 @@
 package daedaedae.nihongo_news_backend.controller;
 
-import daedaedae.nihongo_news_backend.domain.News;
 import daedaedae.nihongo_news_backend.dto.NewsDto;
 import daedaedae.nihongo_news_backend.service.NewsCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/news")
 public class NewsController {
+
     @Autowired
     private NewsCrawlerService newsCrawlerService;
 
@@ -21,8 +23,4 @@ public class NewsController {
         return newsCrawlerService.fetchNewsList(limit);
     }
 
-    @PostMapping("/save")
-    public News saveNews(@RequestBody NewsDto newsDto) {
-        return newsCrawlerService.saveNews(newsDto);
-    }
 }
