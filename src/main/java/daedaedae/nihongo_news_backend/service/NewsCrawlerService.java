@@ -16,6 +16,7 @@ import java.util.List;
 public class NewsCrawlerService {
     String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
 
+    // 뉴스 리스트 불러오기
     public List<NewsDto> fetchNewsList(int limit) throws Exception {
         String url = "https://www3.nhk.or.jp/news/";
         Connection connection = Jsoup.connect(url)
@@ -59,6 +60,7 @@ public class NewsCrawlerService {
         return articles;
     }
 
+    // 뉴스의 세부 내용 불러오기
     public NewsDetailDto fetchNewsDetail(String url) throws Exception {
         Document doc = Jsoup.connect(url)
                 .userAgent(userAgent)
@@ -71,7 +73,6 @@ public class NewsCrawlerService {
         Element summary = doc.selectFirst("p.content--summary");
         if (summary != null) {
             news.setSummary(summary.text());
-            System.out.println("[요약] " + summary.text());
         }
 
         // 각 단락별로 처리
@@ -93,11 +94,9 @@ public class NewsCrawlerService {
                 }
             }
 
-            fullContent.append("----\n\n");
         }
 
         news.setContent(fullContent.toString());
-        System.out.println(fullContent);
 
         return news;
     }
