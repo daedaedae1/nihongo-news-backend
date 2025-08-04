@@ -1,12 +1,10 @@
 package daedaedae.nihongo_news_backend.controller;
 
+import daedaedae.nihongo_news_backend.dto.NewsDetailDto;
 import daedaedae.nihongo_news_backend.dto.NewsDto;
 import daedaedae.nihongo_news_backend.service.NewsCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +19,11 @@ public class NewsController {
     @GetMapping("/list")
     public List<NewsDto> getNewsList(@RequestParam(name = "limit", defaultValue = "6") int limit) throws Exception {
         return newsCrawlerService.fetchNewsList(limit);
+    }
+
+    @GetMapping("/detail")
+    public NewsDetailDto getDetail(@RequestParam("url") String url) throws Exception {
+        return newsCrawlerService.fetchNewsDetail(url);
     }
 
 }

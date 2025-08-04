@@ -1,5 +1,6 @@
 package daedaedae.nihongo_news_backend.service;
 
+import daedaedae.nihongo_news_backend.dto.NewsDetailDto;
 import daedaedae.nihongo_news_backend.dto.NewsDto;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -13,12 +14,13 @@ import java.util.List;
 
 @Service
 public class NewsCrawlerService {
+    String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
 
     public List<NewsDto> fetchNewsList(int limit) throws Exception {
         String url = "https://www3.nhk.or.jp/news/";
         Connection connection = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
-                .timeout(10000);
+                .userAgent(userAgent)
+                .timeout(5000);
         Document doc = connection.get();
 
         List<NewsDto> articles = new ArrayList<>();
@@ -57,31 +59,48 @@ public class NewsCrawlerService {
         return articles;
     }
 
-    /*
-    public NewsDto fetchArticleDetail(String url) throws Exception {
+    public NewsDetailDto fetchNewsDetail(String url) throws Exception {
         Document doc = Jsoup.connect(url)
-                .userAgent("MyProjectBot/1.0")
+                .userAgent(userAgent)
+                .timeout(5000)
                 .get();
-        Element title = doc.selectFirst(".content--title span");
-        Element date = doc.selectFirst(".content--date time");
-        Element summary = doc.selectFirst(".content--summary");
-        Elements bodyElems = doc.select(".content--body .body-text p");
-        StringBuilder body = new StringBuilder();
-        for (Element p : bodyElems) {
-            body.append(p.text().trim()).append("\n");
-        }
-        Element img = doc.selectFirst(".content--thumb img");
-        String imgUrl = (img != null && img.hasAttr("data-src")) ? img.attr("data-src") : "";
 
-        return new NewsDto(
-                title != null ? title.text().trim() : "",
-                url,
-                imgUrl,
-                date != null ? date.text().trim() : "",
-                summary != null ? summary.text().trim() : "",
-                body.toString().trim()
-        );
+        NewsDetailDto news = new NewsDetailDto();
+
+        // 요약 가져오기
+        Element summary = doc.selectFirst("p.content--summary");
+        if (summary != null) {
+            news.setSummary(summary.text());
+            System.out.println("[요약] " + summary.text());
+        }
+
+        // 각 단락별로 처리
+        Elements sections = doc.select(".content--body");
+        StringBuilder fullContent = new StringBuilder();
+
+        for (Element section : sections) {
+            Element title = section.selectFirst(".body-title");
+            Element body = section.selectFirst(".body-text");
+
+            if (title != null) {
+                fullContent.append("[제목] ").append(title.text()).append("\n");
+            }
+
+            if (body != null) {
+                Elements paragraphs = body.select("p");
+                for (Element p : paragraphs) {
+                    fullContent.append("[본문] ").append(p.text()).append("\n\n");
+                }
+            }
+
+            fullContent.append("----\n\n");
+        }
+
+        news.setContent(fullContent.toString());
+        System.out.println(fullContent);
+
+        return news;
     }
-     */
+
 
 }
