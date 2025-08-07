@@ -68,38 +68,34 @@ public class NewsCrawlerService {
                 .get();
 
         NewsDetailDto news = new NewsDetailDto();
+        List<NewsDetailDto.Section> sections = new ArrayList<>();
 
-        // 요약 가져오기
+        // 요약
         Element summary = doc.selectFirst("p.content--summary");
         if (summary != null) {
             news.setSummary(summary.text());
         }
 
-        // 각 단락별로 처리
-        Elements sections = doc.select(".content--body");
-        StringBuilder fullContent = new StringBuilder();
+        Elements sectionElems = doc.select(".content--body");
+        for (Element sectionElem : sectionElems) {
+            NewsDetailDto.Section section = new NewsDetailDto.Section();
+            Element titleElem = sectionElem.selectFirst(".body-title");
+            section.setTitle(titleElem != null ? titleElem.text() : "");
 
-        for (Element section : sections) {
-            Element title = section.selectFirst(".body-title");
-            Element body = section.selectFirst(".body-text");
-
-            if (title != null) {
-                fullContent.append("[제목] ").append(title.text()).append("\n");
+            StringBuilder bodyBuilder = new StringBuilder();
+            Elements paragraphs = sectionElem.select(".body-text p");
+            for (Element p : paragraphs) {
+                String html = p.html().replace("<br>", "\n");
+                // span 등 모든 태그 제거 + 줄바꿈 유지
+                String cleanText = Jsoup.parse(html).text();
+                bodyBuilder.append(cleanText).append("\n\n");
             }
-
-            if (body != null) {
-                Elements paragraphs = body.select("p");
-                for (Element p : paragraphs) {
-                    fullContent.append("[본문] ").append(p.text()).append("\n\n");
-                }
-            }
-
+            section.setBody(bodyBuilder.toString().trim());
+            sections.add(section);
         }
 
-        news.setContent(fullContent.toString());
-
+        news.setSections(sections);
         return news;
     }
-
 
 }

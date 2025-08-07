@@ -2,6 +2,7 @@ package daedaedae.nihongo_news_backend.controller;
 
 import daedaedae.nihongo_news_backend.dto.NewsDetailDto;
 import daedaedae.nihongo_news_backend.dto.NewsDto;
+import daedaedae.nihongo_news_backend.service.GeminiApiService;
 import daedaedae.nihongo_news_backend.service.NewsCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,9 @@ public class NewsController {
 
     @Autowired
     private NewsCrawlerService newsCrawlerService;
+
+    @Autowired
+    private GeminiApiService geminiApiService;
 
     // 뉴스 리스트
     @GetMapping("/list")
