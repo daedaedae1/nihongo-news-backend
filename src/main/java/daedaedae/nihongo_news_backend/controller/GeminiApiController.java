@@ -32,11 +32,16 @@ public class GeminiApiController {
         List<NewsDetailDto.Section> translatedSections = new ArrayList<>();
         for (NewsDetailDto.Section section : original.getSections()) {
             NewsDetailDto.Section tSection = new NewsDetailDto.Section();
+            // null/빈/공백이면 번역하지 않음
             tSection.setTitle(
-                    section.getTitle() == null ? "" : geminiApiService.translateJapaneseToKorean(section.getTitle())
+                    (section.getTitle() == null || section.getTitle().trim().isEmpty())
+                            ? ""
+                            : geminiApiService.translateJapaneseToKorean(section.getTitle())
             );
             tSection.setBody(
-                    section.getBody() == null ? "" : geminiApiService.translateJapaneseToKorean(section.getBody())
+                    (section.getBody() == null || section.getBody().trim().isEmpty())
+                            ? ""
+                            : geminiApiService.translateJapaneseToKorean(section.getBody())
             );
             translatedSections.add(tSection);
         }

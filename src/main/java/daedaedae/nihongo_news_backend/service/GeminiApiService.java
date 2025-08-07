@@ -18,7 +18,9 @@ public class GeminiApiService {
     public String translateJapaneseToKorean(String japaneseText) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String prompt = "아래 일본어 문장을 한국어로 번역해줘. 오직 번역 결과만 출력해줘. 설명이나 해설, 예시, 대체 문장은 쓰지 마.\n" + japaneseText;
+        String prompt = "아래 일본어 문장을 자연스럽고 확실한 한국어로 번역해줘. " +
+                "오로지 내가 준 일본어 문장에 대한 한국어 번역만 답변으로 내줘." +
+                "이외의 다른 말들은 절대 하지 마.\n"+ japaneseText;
 
         // Gemini API body 포맷
         Map<String, Object> part = new HashMap<>();

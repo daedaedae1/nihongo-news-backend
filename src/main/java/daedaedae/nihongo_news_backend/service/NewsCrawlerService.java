@@ -84,11 +84,13 @@ public class NewsCrawlerService {
 
             StringBuilder bodyBuilder = new StringBuilder();
             Elements paragraphs = sectionElem.select(".body-text p");
+
             for (Element p : paragraphs) {
-                String html = p.html().replace("<br>", "\n");
-                // span 등 모든 태그 제거 + 줄바꿈 유지
-                String cleanText = Jsoup.parse(html).text();
-                bodyBuilder.append(cleanText).append("\n\n");
+                // <br>과 <br /> 모두 \n으로 변경
+                String html = p.html().replaceAll("(?i)<br\\s*/?>", "\n");
+                // 모든 HTML 태그 제거 - 줄 바꿈 제외
+                String cleanText = html.replaceAll("<[^>]+>", "");
+                bodyBuilder.append(cleanText.trim()).append("\n\n");
             }
             section.setBody(bodyBuilder.toString().trim());
             sections.add(section);
