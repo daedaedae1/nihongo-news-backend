@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/gemini")
 public class GeminiApiController {
 
     @Autowired
     private GeminiApiService geminiApiService;
 
-    @PostMapping("/translate")
+    @PostMapping("/translate/detail")
     public NewsDetailDto translateFullNews(@RequestBody NewsDetailDto original) {
         NewsDetailDto translated = new NewsDetailDto();
 
@@ -50,5 +50,12 @@ public class GeminiApiController {
         return translated;
     }
 
+    // 제목(또는 임의 문자열) 단건 번역
+    @PostMapping("/translate/text")
+    public String translateText(@RequestBody Map<String, String> req) {
+        String text = req.get("text");
+        if (text == null || text.isBlank()) return "";
+        return geminiApiService.translateJapaneseToKorean(text);
+    }
 
 }

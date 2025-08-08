@@ -20,7 +20,8 @@ public class GeminiApiService {
 
         String prompt = "아래 일본어 문장을 자연스럽고 확실한 한국어로 번역해줘. " +
                 "오로지 내가 준 일본어 문장에 대한 한국어 번역만 답변으로 내줘." +
-                "이외의 다른 말들은 절대 하지 마.\n"+ japaneseText;
+                "이외의 다른 말들은 절대 하지 마." +
+                "원문 줄바꿈은 그대로 유지.\n\n" + japaneseText;
 
         // Gemini API body 포맷
         Map<String, Object> part = new HashMap<>();
