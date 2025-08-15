@@ -15,7 +15,8 @@ public class GeminiApiService {
 
     private final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
-    public String translateJapaneseToKorean(String japaneseText) {
+    public String translateJp2Kr(String japaneseText) {
+        // Spring에서 HTTP 요청을 보낼 때 쓰는 클래스
         RestTemplate restTemplate = new RestTemplate();
 
         String prompt = "아래 일본어 문장을 자연스럽고 확실한 한국어로 번역해줘. " +
@@ -42,6 +43,8 @@ public class GeminiApiService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
         try {
+            // HTTP 요청 실행
+            // exchange로 URL, 메서드, 바디, 응답 타입을 한 번에 지정 가능.
             ResponseEntity<Map> response = restTemplate.exchange(
                     GEMINI_API_URL, HttpMethod.POST, entity, Map.class
             );

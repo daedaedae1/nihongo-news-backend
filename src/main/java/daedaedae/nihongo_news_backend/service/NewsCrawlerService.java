@@ -70,28 +70,39 @@ public class NewsCrawlerService {
         NewsDetailDto news = new NewsDetailDto();
         List<NewsDetailDto.Section> sections = new ArrayList<>();
 
-        // 요약
+        /* 요약 */
+        // p.content--summary 한 개를 찾아, set - 태그까지 포함
         Element summary = doc.selectFirst("p.content--summary");
+
         if (summary != null) {
+            // 텍스트만 추출
             news.setSummary(summary.text());
         }
 
+        /* 본문 */
+        // 모든 .content--body를 찾음
         Elements sectionElems = doc.select(".content--body");
+
+        // 각 블록마다
         for (Element sectionElem : sectionElems) {
             NewsDetailDto.Section section = new NewsDetailDto.Section();
+
+            // .body-title가 있으면 텍스트 세팅, 없으면 빈 문자열
             Element titleElem = sectionElem.selectFirst(".body-title");
             section.setTitle(titleElem != null ? titleElem.text() : "");
 
             StringBuilder bodyBuilder = new StringBuilder();
-            Elements paragraphs = sectionElem.select(".body-text p");
 
+            // .body-text p들을 전부 긁어와서 이어 붙임
+            Elements paragraphs = sectionElem.select(".body-text p");
             for (Element p : paragraphs) {
                 // <br>과 <br /> 모두 \n으로 변경
                 String html = p.html().replaceAll("(?i)<br\\s*/?>", "\n");
-                // 모든 HTML 태그 제거 - 줄 바꿈 제외
+                // 모든 HTML 태그 제거
                 String cleanText = html.replaceAll("<[^>]+>", "");
                 bodyBuilder.append(cleanText.trim()).append("\n\n");
             }
+
             section.setBody(bodyBuilder.toString().trim());
             sections.add(section);
         }

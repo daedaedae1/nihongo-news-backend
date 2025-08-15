@@ -42,6 +42,8 @@ dependencies {
 	// JSON파싱
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
+	// 일본어 형태소 분석
+	implementation "com.worksap.nlp:sudachi:0.7.2"
 }
 
 tasks.named('test') {

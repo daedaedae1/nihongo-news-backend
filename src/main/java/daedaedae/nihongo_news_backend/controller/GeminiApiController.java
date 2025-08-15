@@ -25,7 +25,7 @@ public class GeminiApiController {
 
         // 요약 번역
         translated.setSummary(
-                original.getSummary() == null ? "" : geminiApiService.translateJapaneseToKorean(original.getSummary())
+                original.getSummary() == null ? "" : geminiApiService.translateJp2Kr(original.getSummary())
         );
 
         // 본문 번역
@@ -36,12 +36,12 @@ public class GeminiApiController {
             tSection.setTitle(
                     (section.getTitle() == null || section.getTitle().trim().isEmpty())
                             ? ""
-                            : geminiApiService.translateJapaneseToKorean(section.getTitle())
+                            : geminiApiService.translateJp2Kr(section.getTitle())
             );
             tSection.setBody(
                     (section.getBody() == null || section.getBody().trim().isEmpty())
                             ? ""
-                            : geminiApiService.translateJapaneseToKorean(section.getBody())
+                            : geminiApiService.translateJp2Kr(section.getBody())
             );
             translatedSections.add(tSection);
         }
@@ -50,12 +50,12 @@ public class GeminiApiController {
         return translated;
     }
 
-    // 제목(또는 임의 문자열) 단건 번역
+    // 제목(또는 임의 문자열) 번역
     @PostMapping("/translate/text")
     public String translateText(@RequestBody Map<String, String> req) {
         String text = req.get("text");
         if (text == null || text.isBlank()) return "";
-        return geminiApiService.translateJapaneseToKorean(text);
+        return geminiApiService.translateJp2Kr(text);
     }
 
 }
