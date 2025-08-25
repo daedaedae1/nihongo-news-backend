@@ -65,4 +65,5 @@ public class GeminiApiService {
         }
         return "번역 결과 없음";
     }
+
 }
