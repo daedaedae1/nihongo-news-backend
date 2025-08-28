@@ -3,11 +3,10 @@ package daedaedae.nihongo_news_backend.service;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;  // HttpHeaders
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,15 +34,15 @@ public class DeepLService {
         String url = baseUrl + "/v2/translate";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "DeepL-Auth-Key " + apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "DeepL-Auth-Key " + apiKey);   // key 뒤 공백 중요
 
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.add("text", word);
-        form.add("source_lang", "JA");
-        form.add("target_lang", "KO");
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("text", List.of(word));     // DeepL은 JSON에서 배열 형태 권장
+        body.put("source_lang", "JA");
+        body.put("target_lang", "KO");
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(form, headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
         ResponseEntity<DeepLResponse> response = restTemplate.exchange(url, HttpMethod.POST, entity, DeepLResponse.class);
         String ko = "";

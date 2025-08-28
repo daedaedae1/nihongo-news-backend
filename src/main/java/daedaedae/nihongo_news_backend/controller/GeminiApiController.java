@@ -1,6 +1,7 @@
 package daedaedae.nihongo_news_backend.controller;
 
 import daedaedae.nihongo_news_backend.dto.NewsDetailDto;
+import daedaedae.nihongo_news_backend.dto.JpToken;
 import daedaedae.nihongo_news_backend.service.GeminiApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,4 +60,25 @@ public class GeminiApiController {
         return geminiApiService.translateJp2Kr(text);
     }
 
+    // 레마(원형) 배치 번역: JpToken 배열을 받아 { baseJA: "한국어" } 맵 반환
+    @PostMapping("/translate/lemmas")
+    public Map<String, String> translateLemmas(@RequestBody List<JpToken> tokens) {
+        if (tokens == null || tokens.isEmpty()) return Map.of();
+        Map<String, String> lemmaPos = new LinkedHashMap<>();
+        for (JpToken t : tokens) {
+            String base = (t.base() == null || t.base().isBlank()) ? t.surface() : t.base();
+            if (base == null || base.isBlank()) continue;
+            String posHead = headOfPos(t.pos());
+            // 조사/기호 등은 제외
+            if ("助詞".equals(posHead) || "記号".equals(posHead)) continue;
+            lemmaPos.putIfAbsent(base, posHead);
+        }
+        return geminiApiService.translateLemmas(lemmaPos);
+    }
+
+    private String headOfPos(String pos) {
+        if (pos == null || pos.isBlank()) return "";
+        int i = pos.indexOf('-');
+        return (i > 0) ? pos.substring(0, i) : pos;
+    }
 }
