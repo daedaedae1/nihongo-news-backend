@@ -1,10 +1,14 @@
 package daedaedae.nihongo_news_backend.service;
 
+import daedaedae.nihongo_news_backend.domain.User;
 import daedaedae.nihongo_news_backend.domain.Wordbook;
+import daedaedae.nihongo_news_backend.dto.WordbookDto;
 import daedaedae.nihongo_news_backend.repository.WordbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class WordbookService {
@@ -36,6 +40,11 @@ public class WordbookService {
         String t = s.trim();
         // 일본어/기호 중복 방지에 도움
         return java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFKC);
+    }
+
+    public List<Wordbook> fetchWordList(User user) {
+        List<Wordbook> words = wordbookRepository.findByUserId(user.getId());
+        return words;
     }
 
 }

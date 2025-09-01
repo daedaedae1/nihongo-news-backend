@@ -1,5 +1,6 @@
 package daedaedae.nihongo_news_backend.controller;
 
+import daedaedae.nihongo_news_backend.domain.Bookmark;
 import daedaedae.nihongo_news_backend.domain.User;
 import daedaedae.nihongo_news_backend.domain.Wordbook;
 import daedaedae.nihongo_news_backend.dto.WordbookDto;
@@ -8,11 +9,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,6 +40,12 @@ public class WordbookController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("error", "단어 저장에 실패했습니다."));
         }
+    }
+
+    @GetMapping("/list")
+    public List<Wordbook> getWordList(HttpSession session) {
+        User user = (User) session.getAttribute("loginMember");
+        return wordbookService.fetchWordList(user);
     }
 
 }
