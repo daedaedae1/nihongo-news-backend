@@ -1,9 +1,9 @@
 package daedaedae.nihongo_news_backend.controller;
 
-import daedaedae.nihongo_news_backend.domain.Bookmark;
 import daedaedae.nihongo_news_backend.domain.User;
 import daedaedae.nihongo_news_backend.domain.Wordbook;
 import daedaedae.nihongo_news_backend.dto.WordbookDto;
+import daedaedae.nihongo_news_backend.service.GeminiApiService;
 import daedaedae.nihongo_news_backend.service.WordbookService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,9 @@ public class WordbookController {
 
     @Autowired
     private WordbookService wordbookService;
+
+    @Autowired
+    private GeminiApiService geminiApiService;
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody WordbookDto req, HttpSession session) {
@@ -48,4 +52,17 @@ public class WordbookController {
         return wordbookService.fetchWordList(user);
     }
 
+    @GetMapping("/ex")
+    public List<ExampleItem> makeEx(@RequestParam("jp") String word) {
+
+        String jpEx = geminiApiService.makeExSent(word);
+        String jpReading = geminiApiService.translateJp2Reading(jpEx);
+        String jp2kr = geminiApiService.translateJp2Kr(jpEx);
+        List<ExampleItem> list = new ArrayList<>();
+        ExampleItem item = new ExampleItem(jpEx, jpReading, jp2kr);
+        list.add(item);
+        return list;
+    }
+
+    public record ExampleItem(String ja, String jaRd, String ko) {}
 }

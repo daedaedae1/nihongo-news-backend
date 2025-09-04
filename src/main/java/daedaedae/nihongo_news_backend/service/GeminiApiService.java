@@ -141,6 +141,96 @@ public class GeminiApiService {
         return Map.of();
     }
 
+    public String makeExSent(String word) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("다음 일본어 단어를 활용한 예제를 한 가지 생성해줘. - " + word + "\n");
+        sb.append("다음 단어를 활용한 일본어로 구성된 예제 한 줄만 출력해주고, 그 외 부가 문장은 생성하지 말아줘.");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        Map<String, Object> part = new HashMap<>();
+        part.put("text", sb.toString());
+
+        Map<String, Object> contentsItem = new HashMap<>();
+        contentsItem.put("parts", List.of(part));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("contents", List.of(contentsItem));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-goog-api-key", geminiApiKey);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    GEMINI_API_URL, HttpMethod.POST, entity, Map.class
+            );
+            Map result = response.getBody();
+            if (result != null && result.containsKey("candidates")) {
+                List candidates = (List) result.get("candidates");
+                if (!candidates.isEmpty()) {
+                    Map candidate = (Map) candidates.get(0);
+                    Map contentMap = (Map) candidate.get("content");
+                    List parts = (List) contentMap.get("parts");
+                    Map partMap = (Map) parts.get(0);
+                    return (String) partMap.get("text");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "예제 생성 오류: " + e.getMessage();
+        }
+        return "예제 생성 실패";
+    }
+
+    public String translateJp2Reading(String jp) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("다음 일본어 문장을 히라가나로 번역해줘.\n" + jp + "\n");
+        sb.append("해당 일본어 문장을 히라가나로만 출력해주고, 그 외 부가 문장은 추가하지 말아줘.");
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        Map<String, Object> part = new HashMap<>();
+        part.put("text", sb.toString());
+
+        Map<String, Object> contentsItem = new HashMap<>();
+        contentsItem.put("parts", List.of(part));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("contents", List.of(contentsItem));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-goog-api-key", geminiApiKey);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    GEMINI_API_URL, HttpMethod.POST, entity, Map.class
+            );
+            Map result = response.getBody();
+            if (result != null && result.containsKey("candidates")) {
+                List candidates = (List) result.get("candidates");
+                if (!candidates.isEmpty()) {
+                    Map candidate = (Map) candidates.get(0);
+                    Map contentMap = (Map) candidate.get("content");
+                    List parts = (List) contentMap.get("parts");
+                    Map partMap = (Map) parts.get(0);
+                    String text = (String) partMap.get("text");
+                    String s = text.replaceAll("\\s+", ""); // 공백 문자 제거
+                    return s;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "번역 오류: " + e.getMessage();
+        }
+        return "번역 실패";
+    }
+
     private String sanitizeJsonOnly(String raw) {
         String s = raw.trim();
         // ```json ... ``` 혹은 ``` ... ``` 제거
