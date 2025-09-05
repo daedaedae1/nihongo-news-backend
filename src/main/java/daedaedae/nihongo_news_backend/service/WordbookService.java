@@ -35,6 +35,12 @@ public class WordbookService {
         return wordbookRepository.save(data); // 중복이면 컨트롤러에서 catch
     }
 
+    @Transactional
+    public boolean delete(Long userId, Long wordId) {
+        long result = wordbookRepository.deleteByUserIdAndId(userId, wordId);
+        return result > 0;
+    }
+
     private static String normAndTrim(String s) {
         if (s == null) return "";
         String t = s.trim();

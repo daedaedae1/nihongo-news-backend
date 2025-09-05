@@ -68,5 +68,22 @@ public class WordbookController {
         return out;
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id, HttpSession session) {
+        User user = (User) session.getAttribute("loginMember");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "로그인 유저 정보 없음"));
+        }
+
+        boolean result = wordbookService.delete(user.getId(), id);
+        if (result) {
+            return ResponseEntity.ok(Map.of("success", "단어가 삭제되었습니다."));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "단어를 찾을 수 없습니다."));
+        }
+    }
+
     public record ExampleItem(String ja, String jaRd, String ko) {}
 }

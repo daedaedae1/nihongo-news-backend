@@ -11,4 +11,5 @@ public interface WordbookRepository extends JpaRepository<Wordbook, Long> {
     boolean existsByUserIdAndJpWord(Long id, String jpWord);
     Optional<Wordbook> findByUserIdAndJpWord(Long id, String jpWord);
     List<Wordbook> findByUserId(Long id);
+    long deleteByUserIdAndId(Long userId, Long id); //
 }
