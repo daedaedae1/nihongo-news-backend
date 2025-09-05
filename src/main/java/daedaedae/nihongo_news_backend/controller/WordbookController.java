@@ -53,15 +53,19 @@ public class WordbookController {
     }
 
     @GetMapping("/ex")
-    public List<ExampleItem> makeEx(@RequestParam("jp") String word) {
+    public List<ExampleItem> makeEx(@RequestParam("jp") String jpWord) {
+        List<Map<String, String>> raw = geminiApiService.makeExamplesJaRdKo(jpWord, 3);
 
-        String jpEx = geminiApiService.makeExSent(word);
-        String jpReading = geminiApiService.translateJp2Reading(jpEx);
-        String jp2kr = geminiApiService.translateJp2Kr(jpEx);
-        List<ExampleItem> list = new ArrayList<>();
-        ExampleItem item = new ExampleItem(jpEx, jpReading, jp2kr);
-        list.add(item);
-        return list;
+        List<ExampleItem> out = new ArrayList<>();
+        if (raw != null) {
+           for (Map<String, String> m : raw) {
+               String ja = m.getOrDefault("ja", "");
+               String jaRd = m.getOrDefault("jaRd", "");
+               String ko = m.getOrDefault("ko", "");
+               out.add(new ExampleItem(ja, jaRd, ko));
+           }
+        }
+        return out;
     }
 
     public record ExampleItem(String ja, String jaRd, String ko) {}
