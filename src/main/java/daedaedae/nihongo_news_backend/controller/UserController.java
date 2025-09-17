@@ -151,12 +151,19 @@ public class UserController {
 
     @PostMapping("/update-password")
     public ResponseEntity<?> updatePwd(@RequestBody Map<String, String> request, HttpSession session) {
-        User user = (User) session.getAttribute("loginMember");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "로그인이 필요합니다."));
+        User login = (User) session.getAttribute("loginMember");
+        String resetUserid = (String) session.getAttribute("pwdResetUserid");
+        if (login == null && resetUserid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "로그인이 필요하거나 비밀번호 찾기 절차를 시작하세요."));
         }
-        userService.changePwd(user, request.get("newPassword"));
-        session.setAttribute("loginMember", user);
+
+        User target = (login != null)? login : userService.findUserByUserid(resetUserid);
+        userService.changePwd(target, request.get("newPassword"));
+
+        session.removeAttribute("pwdResetUserid");
+
+        if (login != null) session.setAttribute("loginMember", target);
+
         return ResponseEntity.ok(Map.of("success", "비밀번호가 변경되었습니다."));
     }
 
@@ -193,7 +200,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", "이름 또는 닉네임을 입력하세요."));
         }
 
-        User user = userService.findUserid(userName, userNickname);
+        User user = userService.findUseridByNameAndNickname(userName, userNickname);
 
         if (user != null) {
             return ResponseEntity.ok(Map.of("success", "아이디 찾기에 성공했습니다.", "userid", user.getUserid()));
@@ -202,6 +209,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
         }
 
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestBody Map<String, String> request, HttpSession session) {
+        String userid = request.get("checkingUserid").trim();
+        String name = request.get("checkingName").trim();
+
+        User user = userService.findUserByUseridAndName(userid, name);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+        }
+
+        session.setAttribute("pwdResetUserid", userid);
+        return ResponseEntity.ok(Map.of("success", "본인 확인이 완료되었습니다."));
     }
 
 }

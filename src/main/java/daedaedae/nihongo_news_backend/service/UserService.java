@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -30,6 +32,22 @@ public class UserService {
         return userRepository.findByUserid(user.getUserid());
     }
 
+    public User findUseridByNameAndNickname(String name, String nickname) {
+        return userRepository.findByNameAndNickname(name, nickname);
+    }
+
+    public User findUserByUseridAndName(String userid, String name) {
+        return userRepository.findByUseridAndName(userid, name);
+    }
+
+    public User findUserByUserid(String userid) {
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return null;
+        }
+        return user;
+    }
+
     public boolean existsByUserid(String userid) {
         User user = userRepository.findByUserid(userid);
         return (user != null)? true : false;
@@ -38,10 +56,6 @@ public class UserService {
     public boolean existsByNickname(String nickname) {
         boolean result = userRepository.existsByNickname(nickname);
         return (result)? true : false;
-    }
-
-    public User findUserid(String name, String nickname) {
-        return userRepository.findByNameAndNickname(name, nickname);
     }
 
     // 문제가 생기면 롤백하여 데이터 보존?
