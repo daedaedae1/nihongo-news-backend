@@ -41,16 +41,16 @@ public class WordbookService {
         return result > 0;
     }
 
+    public List<Wordbook> fetchWordList(User user) {
+        List<Wordbook> words = wordbookRepository.findByUserId(user.getId());
+        return words;
+    }
+
     private static String normAndTrim(String s) {
         if (s == null) return "";
         String t = s.trim();
         // 일본어/기호 중복 방지에 도움
         return java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFKC);
-    }
-
-    public List<Wordbook> fetchWordList(User user) {
-        List<Wordbook> words = wordbookRepository.findByUserId(user.getId());
-        return words;
     }
 
 }

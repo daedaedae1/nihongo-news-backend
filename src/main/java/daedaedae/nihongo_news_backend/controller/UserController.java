@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,8 +94,13 @@ public class UserController {
                 "name", user.getName()));
     }
 
-    @GetMapping("/check-id")
+    @GetMapping("/check-userid")
     public ResponseEntity<?> checkId(@RequestParam("userid") String userid) {
+        String u = userid.isBlank() ? "" : userid.trim();
+        if (u.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "아이디를 입력하세요."));
+        }
+
         boolean result = userService.existsByUserid(userid);
         if (result) {
             return ResponseEntity
@@ -103,6 +109,23 @@ public class UserController {
         }
         else {
             return ResponseEntity.ok(Map.of("success", "사용 가능한 아이디입니다."));
+        }
+    }
+
+    @GetMapping("/check-nickname")
+    public ResponseEntity<?> checkNickname(@RequestParam("nickname") String nickname) {
+        String n = nickname.isBlank() ? "" : nickname.trim();
+        if (n.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "닉네임을 입력하세요."));
+        }
+
+        boolean result = userService.existsByNickname(n);
+
+        if (result) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "이미 존재하는 닉네임입니다."));
+        }
+        else {
+            return ResponseEntity.ok(Map.of("success", "사용 가능한 닉네임입니다."));
         }
     }
 
@@ -160,6 +183,13 @@ public class UserController {
         else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "회원 탈퇴에 에러 발생"));
         }
+    }
+
+    @PostMapping("/find-userid")
+    public ResponseEntity<?> findUserid(String userid, String nickname) {
+
+
+        return null;
     }
 
 }

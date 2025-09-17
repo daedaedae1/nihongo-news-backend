@@ -35,6 +35,11 @@ public class UserService {
         return (user != null)? true : false;
     }
 
+    public boolean existsByNickname(String nickname) {
+        boolean result = userRepository.existsByNicknameIgnoreCase(nickname);
+        return (result)? true : false;
+    }
+
     // 문제가 생기면 롤백하여 데이터 보존?
     @Transactional
     public void deleteUser(User user) {
