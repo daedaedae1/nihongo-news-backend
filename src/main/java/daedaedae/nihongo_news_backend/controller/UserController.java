@@ -101,7 +101,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디를 입력하세요."));
         }
 
-        boolean result = userService.existsByUserid(userid);
+        boolean result = userService.existsByUserid(u);
         if (result) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)    // 비즈니스 로직의 실패를 의미, 409 Conflict
@@ -186,10 +186,22 @@ public class UserController {
     }
 
     @PostMapping("/find-userid")
-    public ResponseEntity<?> findUserid(String userid, String nickname) {
+    public ResponseEntity<?> findUserid(@RequestBody Map<String, String> request) {
+        String userName = (request.get("checkingName")).isBlank() ? "" : (request.get("checkingName")).trim();
+        String userNickname = (request.get("checkingNick")).isBlank() ? "" : (request.get("checkingNick")).trim();
+        if (userName.isEmpty() || userNickname.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이름 또는 닉네임을 입력하세요."));
+        }
 
+        User user = userService.findUserid(userName, userNickname);
 
-        return null;
+        if (user != null) {
+            return ResponseEntity.ok(Map.of("success", "아이디 찾기에 성공했습니다.", "userid", user.getUserid()));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+        }
+
     }
 
 }

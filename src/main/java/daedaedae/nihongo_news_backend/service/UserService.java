@@ -36,8 +36,12 @@ public class UserService {
     }
 
     public boolean existsByNickname(String nickname) {
-        boolean result = userRepository.existsByNicknameIgnoreCase(nickname);
+        boolean result = userRepository.existsByNickname(nickname);
         return (result)? true : false;
+    }
+
+    public User findUserid(String name, String nickname) {
+        return userRepository.findByNameAndNickname(name, nickname);
     }
 
     // 문제가 생기면 롤백하여 데이터 보존?
