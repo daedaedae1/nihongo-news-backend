@@ -25,11 +25,6 @@ public class GeminiApiController {
     public NewsDetailDto translateFullNews(@RequestBody NewsDetailDto original) {
         NewsDetailDto translated = new NewsDetailDto();
 
-        // 요약 번역
-        translated.setSummary(
-                original.getSummary() == null ? "" : geminiApiService.translateJp2Kr(original.getSummary())
-        );
-
         // 본문 번역
         List<NewsDetailDto.Section> translatedSections = new ArrayList<>();
         for (NewsDetailDto.Section section : original.getSections()) {

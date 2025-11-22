@@ -46,7 +46,7 @@ public class BookmarkService {
                     b.getTitle(),
                     b.getUrl(),
                     b.getImage(),
-                    b.getDate()
+                    b.getCreatedAt().toString()
             ));
         }
         return articles;

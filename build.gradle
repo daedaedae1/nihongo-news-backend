@@ -24,7 +24,7 @@ dependencies {
 	// JpaRepository
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// MySql
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'com.mysql:mysql-connector-j'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -37,6 +37,9 @@ dependencies {
 	implementation 'org.jsoup:jsoup:1.17.2'
 	implementation 'org.projectlombok:lombok:1.18.30'
 
+	// 크롤러 -2
+	implementation 'com.rometools:rome:1.19.0'
+
 	// 재미나이 api
 	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 	// JSON파싱
@@ -44,6 +47,7 @@ dependencies {
 
 	// 일본어 형태소 분석
 	implementation "com.worksap.nlp:sudachi:0.7.2"
+
 }
 
 tasks.named('test') {
