@@ -42,6 +42,7 @@ dependencies {
 
 	// 재미나이 api
 	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
 	// JSON파싱
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
